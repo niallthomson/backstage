@@ -19,6 +19,7 @@ import { useOutlet } from 'react-router';
 
 import { Page } from '@backstage/core-components';
 import { EntityName } from '@backstage/catalog-model';
+import { techDocsPage } from '@backstage/plugin-techdocs-mkdocs';
 
 import { TechDocsEntityMetadata, TechDocsMetadata } from '../../../types';
 import { LegacyTechDocsPage } from './LegacyTechDocsPage';
@@ -46,7 +47,7 @@ export const TechDocsPage = ({ children }: TechDocsPageProps) => {
     return (
       outlet || (
         <TechDocsPageProvider>
-          <LegacyTechDocsPage />
+          <LegacyTechDocsPage>{techDocsPage}</LegacyTechDocsPage>
         </TechDocsPageProvider>
       )
     );
