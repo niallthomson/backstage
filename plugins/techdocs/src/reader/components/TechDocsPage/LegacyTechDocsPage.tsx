@@ -14,63 +14,30 @@
  * limitations under the License.
  */
 
-import React, { useCallback, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import useAsync from 'react-use/lib/useAsync';
-import { techdocsApiRef } from '../../../api';
-import { TechDocsNotFound } from '../TechDocsNotFound';
-import { useApi } from '@backstage/core-plugin-api';
+import React, { FC } from 'react';
+
 import { Page, Content } from '@backstage/core-components';
-import { Reader } from '../Reader';
+
 import { TechDocsPageHeader } from '../TechDocsPageHeader';
+import { Reader } from '../Reader';
 
-export const LegacyTechDocsPage = () => {
-  const [documentReady, setDocumentReady] = useState<boolean>(false);
-  const { namespace, kind, name } = useParams();
+import { useTechDocsPage } from './context';
 
-  const techdocsApi = useApi(techdocsApiRef);
-
-  const { value: techdocsMetadataValue } = useAsync(() => {
-    if (documentReady) {
-      return techdocsApi.getTechDocsMetadata({ kind, namespace, name });
-    }
-
-    return Promise.resolve(undefined);
-  }, [kind, namespace, name, techdocsApi, documentReady]);
-
-  const { value: entityMetadataValue, error: entityMetadataError } =
-    useAsync(() => {
-      return techdocsApi.getEntityMetadata({ kind, namespace, name });
-    }, [kind, namespace, name, techdocsApi]);
-
-  const onReady = useCallback(() => {
-    setDocumentReady(true);
-  }, [setDocumentReady]);
-
-  if (entityMetadataError) {
-    return <TechDocsNotFound errorMessage={entityMetadataError.message} />;
-  }
+export const LegacyTechDocsPage: FC = ({ children }) => {
+  const { onReady, entityRef, entityMetadataValue, techdocsMetadataValue } =
+    useTechDocsPage();
 
   return (
     <Page themeId="documentation">
       <TechDocsPageHeader
-        techDocsMetadata={techdocsMetadataValue}
+        entityRef={entityRef}
         entityMetadata={entityMetadataValue}
-        entityRef={{
-          kind,
-          namespace,
-          name,
-        }}
+        techDocsMetadata={techdocsMetadataValue}
       />
       <Content data-testid="techdocs-content">
-        <Reader
-          onReady={onReady}
-          entityRef={{
-            kind,
-            namespace,
-            name,
-          }}
-        />
+        <Reader onReady={onReady} entityRef={entityRef}>
+          {children}
+        </Reader>
       </Content>
     </Page>
   );
