@@ -1,5 +1,11 @@
 # @backstage/plugin-airbrake-backend
 
+## 0.2.0
+
+### Minor Changes
+
+- da78e79a94: This marks the first release where the Airbrake plugin is useable. Airbrake frontend and Airbrake backend work with each other. Currently just a summary of the latest Airbrakes is shown on Backstage.
+
 ## 0.1.0
 
 ### Minor Changes
